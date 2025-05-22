@@ -3,15 +3,19 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth.routes');
+const vehiculeRoutes = require('./routes/vehicule.routes');
 
 const app = express();
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Routes principales
 app.use('/auth', authRoutes);
+app.use('/vehicules', vehiculeRoutes);
 
-// Test
+// Route de test
 app.get('/', (req, res) => res.send('🚀 API EcoRide opérationnelle'));
 
 const PORT = process.env.PORT || 5000;

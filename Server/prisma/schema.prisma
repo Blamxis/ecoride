@@ -8,13 +8,65 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  pseudo    String   @unique
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  credits   Int      @default(20)
-  createdAt DateTime @default(now())
+  id           Int            @id @default(autoincrement())
+  pseudo       String         @unique
+  email        String         @unique
+  password     String
+  role         Role           @default(USER)
+  credits      Int            @default(20)
+  createdAt    DateTime       @default(now())
+
+  vehicules    Vehicule[]
+  trajets      Trajet[]       @relation("ChauffeurTrajets")
+  participations Covoiturage[] @relation("PassagerTrajets")
+}
+
+model Vehicule {
+  id                Int       @id @default(autoincrement())
+  marque            String
+  modele            String
+  energie           String
+  couleur           String
+  immatriculation   String    @unique
+  annee             Int
+
+  conducteur        User      @relation(fields: [conducteurId], references: [id])
+  conducteurId      Int
+
+  trajets           Trajet[]
+}
+
+model Trajet {
+  id             Int           @id @default(autoincrement())
+  villeDepart    String
+  villeArrivee   String
+  date           DateTime
+  heureDepart    String
+  heureArrivee   String
+  prix           Float
+  places         Int
+  estEcologique  Boolean       @default(false)
+
+  chauffeur      User          @relation("ChauffeurTrajets", fields: [chauffeurId], references: [id])
+  chauffeurId    Int
+
+  vehicule       Vehicule      @relation(fields: [vehiculeId], references: [id])
+  vehiculeId     Int
+
+  passagers      Covoiturage[] @relation("TrajetPassagers")
+}
+
+model Covoiturage {
+  id           Int       @id @default(autoincrement())
+
+  passager     User      @relation("PassagerTrajets", fields: [passagerId], references: [id])
+  passagerId   Int
+
+  trajet       Trajet    @relation("TrajetPassagers", fields: [trajetId], references: [id])
+  trajetId     Int
+
+  confirme     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
 }
 
 enum Role {
